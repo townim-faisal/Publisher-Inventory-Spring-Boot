@@ -1,0 +1,33 @@
+class Customer {
+	private int id;
+	private int customerId;
+
+	private Customer customer;
+
+	@Column(name = "customer_id")
+	public int getCustomerId() {
+		return customerId;
+	}
+	
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+	@Transient
+	public Customer getCustomer() {
+		return customer;
+	}
+	
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+		this.customerId = customer.getId();
+	}
+}
+
+--------- controller
+Customer customer = new Customer();
+//customer.setCustomerId = 5;
+customer.setCustomer = cust;
+
+session.save(customer);
+

@@ -1,0 +1,300 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${page_title}">Add or Update BinderOrder</title>
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<div style="width:500px; margin:0 auto;">
+
+   <!--<div th:if="${addNewBinderOrder.id} == '0'"> <h1>Add New BinderOrder</h1></div>
+    <div th:if="${addNewBinderOrder.id} != '0'"> <h1>Update BinderOrder</h1></div>-->
+    <h1 th:text="${page_title}"></h1>
+    <h3 th:text="${orderPlaceID}"></h3>
+
+<form class="addBinderOrderForm" role="form" action="#" th:action="@{/binderOrder/new-binderOrder}" th:object="${addNewBinderOrder}" method="post">
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >BinderOrder Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">BinderOrder not Saved </div>
+
+    <input type="hidden" th:field="*{id}" readonly="readonly" />
+    <input type="hidden" th:field="*{publisher}" readonly="readonly" />
+    <input type="hidden" th:field="*{orderSerial}" readonly="readonly" />
+    <div th:each="binderOrderBooks, iterator : ${addNewBinderOrderBooks}">
+        <input type="hidden" th:field="*{binderOrderBooks[__${iterator.index}__].id}" readonly="readonly" />
+    </div>
+
+    <div class="form-group">
+        <label>Date</label>
+        <input id="datepicker" class="form-control hideOnClick" type="date" th:field="*{orderPlaceDate}"/>
+    </div>
+
+    <div class="form-group">
+        <label>Binder</label>
+        <select class="form-control ui search selection dropdown" id="binder-select" th:field="*{binder}">
+            <option th:if="${binder} == null" value=" " >Select Binder</option>
+            <option th:each="binder : ${allBinder}"
+                    th:value="${binder.id}"
+                    th:text="${binder.name}">
+            </option>
+        </select>
+    </div>
+
+    <div class="form-group" >
+    <table class="table table-striped" id="tableId">
+        <thead>
+        <tr>
+            <th><input class='check_all' type='checkbox' onclick="select_all()"/></th>
+            <th>Sl</th>
+            <th>Book</th>
+            <th>Price (unit)</th>
+            <th>Quantity</th>
+            <th>Discount (unit)</th>
+            <!--<th>Update</th>
+            <th>Delete</th>-->
+        </tr>
+        </thead>
+
+        <!--New Order-->
+        <tbody th:if="${addNewBinderOrder.id}==0">
+            <tr>
+                <td><input type='checkbox' class='case'/></td>
+                <td>1.</td>
+                <td>
+                    <select class="form-control ui search selection dropdown" id="book-select" name="binderOrderBooks[0].book">
+                        <option th:if="${book} == null" value="" >Select Book</option>
+                        <option th:each="book : ${allBook}"
+                                th:value="${book.id}"
+                                th:text="${book.name}">
+                        </option>
+                    </select>
+                </td>
+                <td><input class="form-control hideOnClick" type="number" name="binderOrderBooks[0].unitPrice" min="0"/></td>
+                <td><input class="form-control hideOnClick" type="number" name="binderOrderBooks[0].orderQuantity" min="0"/></td>
+                <td><input class="form-control hideOnClick" type="number" name="binderOrderBooks[0].unitDiscount" min="0"/> </td>
+            </tr>
+        </tbody>
+
+        <!--Update Order-->
+        <tbody th:if="${addNewBinderOrder.id}>0">
+        <tr th:each="binderOrderBooks, iterator : ${addNewBinderOrderBooks}">
+            <td><input type='checkbox' class='case'/></td>
+            <td th:text="${iterator.index+1}">1.</td>
+            <td>
+                <select class="form-control ui search selection dropdown" id="book-select" th:field="*{binderOrderBooks[__${iterator.index}__].book}">
+                    <option th:if="${book} == null" value="" >Select Book</option>
+                    <option th:each="book : ${allBook}"
+                            th:value="${book.id}"
+                            th:text="${book.name}">
+                    </option>
+                </select>
+            </td>
+            <td><input class="form-control hideOnClick" type="number" th:field="*{binderOrderBooks[__${iterator.index}__].unitPrice}" min="0"/></td>
+            <td><input class="form-control hideOnClick" type="number" th:field="*{binderOrderBooks[__${iterator.index}__].orderQuantity}" min="0"/></td>
+            <td><input class="form-control hideOnClick" type="number" th:field="*{binderOrderBooks[__${iterator.index}__].unitDiscount}" min="0"/> </td>
+        </tr>
+        </tbody>
+
+
+    </table>
+
+    </div>
+
+    <button type="button" class='delete'>- Delete</button>
+    <button type="button" class='addmore'>+ Add More</button>
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('discount')}? 'has-error'">
+        <label class="required">Discount</label>
+        <input class="form-control hideOnClick" type="number" th:field="*{discount}" min="0"/>
+        <p th:if="${#fields.hasErrors('discount')}" class="label label-danger" th:errors="*{discount}">Name Error</p>
+    </div>
+
+
+    <a href="/binderOrder/all-binderOrder?names=" class="btn btn-warning" style="width: 100px; margin-right: 50px; margin-left: 30px">Cancel</a>
+
+    <button type="reset" class="btn btn-danger" style="width: 100px; margin-right: 50px;">Reset</button>
+
+    <button th:if="${addNewBinderOrder.id} == '0'" type="submit" class="btn btn-success" style="width: 100px">Add</button>
+    <button th:if="${addNewBinderOrder.id} != '0'" type="submit" class="btn btn-success" style="width: 100px">Update</button>
+
+</form>
+</div>
+
+<script type="text/javascript">
+
+    $.validator.addMethod("customphone", function(value, element, regexpr) {
+        return regexpr.test(value);
+    }, "ERROR from customphone javascript method.");
+
+
+            $(document).ready(function() {
+
+        $(".addBinderOrderForm").validate(
+                {
+                    rules: {
+                        name:{
+                            required: true
+                        },
+                        phone:{
+                            required : true,
+                            customphone:/^[0-9]*$/,
+                            maxlength: 13,
+                            remote : {
+                                url: "/binderOrder/isPhoneExist",
+                                /*url: "/binderOrder/isIdExist",*/
+                                type: "get",
+                                data: {
+                                    phone: function() {
+                                        return $("#phone").val();
+                                    },
+                                    id: function() {
+                                        return $("#id").val();
+                                    }
+
+                                }
+                            }
+                        },
+                        email:{
+                            email: true,
+                            remote : {
+                                url: "/binderOrder/isEmailExist",
+                                type: "get",
+                                data: {
+                                    email: function() {
+                                        return $("#email").val();
+                                    },
+                                    id: function() {
+                                        return $("#id").val();
+                                    }
+                                }
+                            }
+                        },
+                    },
+                    messages: {
+                        name: {
+                            required: "BinderOrder must have a name."
+                        },
+                        phone: {
+                            required: "Phone number required.",
+                            remote: "Other binderOrder is using this phone number.",
+                            customphone: "Please insert digits only.",
+                            maxlength: "Phone no. can be maximum 13 characters long."
+                        },
+                        email: {
+                            email: "Valid email address required.",
+                            remote: "Other binderOrder is using this email."
+                        }
+                    },
+                    highlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-success has-success').addClass('text text-danger has-error');
+                    },
+                    unhighlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-danger has-error').addClass('text text-success has-success');
+                    },
+                }
+        );
+
+    });
+</script>
+
+<!--<script>
+    $(function() {
+        $( "#datepicker" ).datepicker({
+            dateFormat:'yyyy-MM-dd',
+            changeYear: true,
+            changeMonth: true,
+            yearRange: "1900 : currentYear"
+        });
+    });
+</script>-->
+
+<script>
+    $(document).ready(function () {
+        $(".hideOnClick").click(function () {
+            $("#hideThis").hide();
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + '/binderOrder/all-binderOrder' + '"]').parent().addClass('active');
+    });
+</script>
+
+
+</body>
+
+
+
+<!--Different Multiple-->
+<script>
+
+    var i= $("#tableId tbody tr").length;
+
+
+    $(".addmore").on('click',function(){
+        var data='<tr th:object="${addNewBinderOrder}"><td><input type="checkbox" class="case"/></td><td>'+(i+1)+'.</td>';
+        data += '<td>' +
+                    '<select class="form-control ui search selection dropdown" id="book-select-2"  name="binderOrderBooks['+i+'].book">' +
+                        '<option th:if="${book} == null" value="" >Select Book</option>' +
+                        '<option th:each="book : ${allBook}" th:value="${book.id}" th:text="${book.name}"></option>' +
+                    '</select>' +
+                '</td>' +
+                '<td><input class="form-control hideOnClick" type="number" name="binderOrderBooks['+i+'].unitPrice" min="0"/></td>' +
+                '<td><input class="form-control hideOnClick" type="number" name="binderOrderBooks['+i+'].orderQuantity" min="0"/></td>' +
+                '<td><input class="form-control hideOnClick" type="number" name="binderOrderBooks['+i+'].unitDiscount" min="0"/></td>' +
+                '</tr>';
+        $('table').append(data);
+        i++;
+
+    });
+
+    $(".delete").on('click', function() {
+        $('.case:checkbox:checked').parents("tr").remove();
+
+        i=$("#tableId tbody tr").length;
+
+    });
+
+</script>
+
+<!--<script>
+    $(".delete").on('click', function() {
+        $('.case:checkbox:checked').parents("tr").remove();
+
+    });
+</script>-->
+
+<script>
+    function select_all() {
+        $('input[class=case]:checkbox').each(function(){
+            if($('input[class=check_all]:checkbox:checked').length == 0){
+                $(this).prop("checked", false);
+            } else {
+                $(this).prop("checked", true);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    $('#book-select')
+            .dropdown();
+</script>
+<script>
+    $('#book-select-2')
+            .dropdown();
+</script>
+
+<script>
+    $('#binder-select')
+            .dropdown();
+</script>
+
+</html>

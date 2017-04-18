@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Roles</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+    <body>
+
+        <div >
+            <h3>Role: USER, ADMIN and SUPER_ADMIN are created</h3>
+        </div>
+    </body>
+<script>
+    $(document).ready(function() {
+        $('a[href="' + '/role/all-role' + '"]').parent().addClass('active');
+    });
+</script>
+</html>

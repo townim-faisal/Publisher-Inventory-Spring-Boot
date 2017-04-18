@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:pages="http://www.w3.org/1999/xhtml"
+      xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${page_title}">Detailed Order</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">All BinderPlaceOrder</h1>
+
+
+
+<div style="width:800px; margin:0 auto; padding-top: 1%" th:object="${binderReceive}">
+
+    <div th:if="${confirmation}!=null" th:text="${confirmation}" class="alert alert-success" id="hideThis" >Order Saved </div>
+
+    <table>
+        <tr>
+            <td style="padding:0 15px 0 15px;">
+                <h3>  Receive No :  <span th:text="${receiveId}"></span></h3>
+            </td>
+            <td style="padding:0 15px 0 15px;">
+                <h3> Order Date : <span th:text="${orderDate}"></span></h3>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:10px 15px 0 15px;">
+                <h3> Binder : <span th:text="${binder}"></span></h3>
+                <h4> Status : <span th:text="${binderReceive.confirmationStatus.name()}"></span></h4>
+            </td>
+        </tr>
+    </table>
+
+    <div style="padding-top: 5%">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Sl</th>
+            <th>Order ID</th>
+            <th>Item</th>
+            <th>Price (unit)</th>
+            <th>Discount (unit)</th>
+            <th>Ordered quantity</th>
+            <th>Received quantity</th>
+
+            <!--<th>Details</th>
+            <th>Update</th>
+            <th>Delete</th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="binderOrder, iterator : ${binderReceive.binderOrders}" >
+
+            <tr th:each="binderReceiveBook, rotator : ${binderReceive.binderReceiveBooks}">
+
+                <td th:if="${rotator.index == 0}" th:text="${iterator.index+1}" th:rowspan="${rotator.size}"></td>
+                <td th:if="${rotator.index == 0}" th:text="${binderOrder.orderId}" th:rowspan="${rotator.size}"></td>
+                <!--<td th:if="${rotator.index == 0}" th:text="${binderReceiveDetail.binderOrder.orderId}" th:rowspan="${rotator.size}"></td>-->
+                <td th:if="${binderOrder.orderId == binderReceiveBook.binderOrder.orderId}" th:text="${binderReceiveBook.book.name}"></td>
+                <td th:if="${binderOrder.orderId == binderReceiveBook.binderOrder.orderId}" th:text="${binderReceiveBook.unitPrice}"></td>
+                <td th:if="${binderOrder.orderId == binderReceiveBook.binderOrder.orderId}" th:text="${binderReceiveBook.unitDiscount}"></td>
+                <td th:if="${binderOrder.orderId == binderReceiveBook.binderOrder.orderId}" th:text="${binderReceiveBook.orderQuantity}"></td>
+                <!--<td th:text="${binderReceiveDetail.receivedQuantity}"></td>-->
+
+                <td th:if="${binderOrder.orderId == binderReceiveBook.binderOrder.orderId}" th:text="${binderReceiveBook.receiveQuantity}"></td>
+
+            </tr>
+        </th:block>
+
+        </tbody>
+    </table>
+    </div>
+
+    <table>
+        <tbody>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Total Received Items</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${totalItemQuantities}"></td>
+        </tr>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Sub Total</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${orderSubTotal}"></td>
+            <td style="padding:0 15px 0 0;">BDT</td>
+        </tr>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Discount</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${discount}"></td>
+            <td style="padding:0 15px 0 0;">BDT</td>
+        </tr>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Total Amount</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${orderTotalAmount}"></td>
+            <td style="padding:0 15px 0 0;">BDT</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="padding-top: 5%">
+        <a href="/binderReceive/all-binderReceive?names=" class="btn btn-info" style="width: 100px; margin-right: 50px; margin-left: 30px">Orders</a>
+
+        <span th:if="${binderReceive.confirmationStatus.name()=='NOT_CONFIRMED'}" >
+            <a href="#" th:href="@{/binderReceive/delete/} + ${binderReceiveId}" class="btn btn-danger" style="width: 100px; margin-right: 50px;">Delete</a>
+            <a href="#" th:href="@{/binderReceive/edit/} + ${binderReceiveId}" class="btn btn-warning" style="width: 100px; margin-right: 50px;">Update</a>
+            <a href="#" th:href="@{/binderReceive/setOrderStatus/} + ${binderReceiveId}" class="btn btn-success" style="width: 100px">Confirm</a>
+        </span>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+    });
+</script>
+
+<!--Modal Script Delete-->
+<script
+        src="../public/resource/jquery/delete-confirmation.js" th:src="@{/resource/jquery/delete-confirmation.js}">
+</script>
+
+</body>
+</html>

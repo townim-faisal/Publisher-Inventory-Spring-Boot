@@ -1,0 +1,72 @@
+﻿<?Infragistics.Models format="xaml" version="29"?>
+<Page xmlns="http://prototypes.infragistics.com/"
+                                                          xmlns:d="http://prototypes.infragistics.com/views/design"
+                                                          Id="f94ae649-a084-4875-bc55-6692da5e5245" d:Design.ShowGuides="False">
+    <Page.Content>
+        <Content Width="1024" Height="768" Id="d2c6f022-6225-4902-bbc2-82e056966282">
+            <Content.Layers>
+                <Layer Id="009d3b4a-2b60-4490-8183-43ef2ffd6632" Panel.Layout="Stretch" />
+                <AnnotationsLayer Id="ea409b10-8778-49e6-b4d1-4d65823aa15f" Panel.Layout="Stretch" />
+            </Content.Layers>
+            <Content.Viewbox>
+                <Viewbox Size="1024,768" Id="141f6cb0-aeb2-450d-b370-279fac471cae" />
+            </Content.Viewbox>
+            <Content.GuidesInfo>
+                <GuidesInfo Id="2b43fc47-989b-4021-89ab-c452393e96e2" />
+            </Content.GuidesInfo>
+        </Content>
+    </Page.Content>
+    <Page.Device>
+        <DeviceInfo Id="Browser" Orientation="None" />
+    </Page.Device>
+    <Page.Scenes>
+        <Scene Title="Start" Created="08/30/2016 10:39:52" Id="e4eb700b-d44f-4e60-9156-7807f989c910">
+            <Scene.KeyFrames>
+                <KeyFrame Id="9466e080-c2cf-44d5-a307-5b516c862b8a">
+                    <KeyFrame.Operations>
+                        <Add Property="Panel.Children" Target="009d3b4a-2b60-4490-8183-43ef2ffd6632">
+                            <Add.Item>
+                                <BootstrapBox Id="2bb95ce2-a493-47f9-a520-36914f72b63f" Panel.Layout="Stretch">
+                                    <BootstrapBox.Content>
+                                        <BootstrapContainer Id="29fcb3e8-c14f-4e39-b4cb-ee4bcd26ec59">
+                                            <BootstrapContainer.Children>
+                                                <Row Id="56e7a617-7e15-4f5c-a71a-ae7a89ef095a">
+                                                    <Row.Children>
+                                                        <Column Id="5509deb3-b633-449b-8e90-5c1dcb4868f5" BootstrapContainer.SpanSm="12" />
+                                                    </Row.Children>
+                                                </Row>
+                                                <Row Id="9e4dbd29-803d-4796-9cbc-e1880429f9e7">
+                                                    <Row.Children>
+                                                        <Column Id="2d782c3d-b9b0-4e8d-9476-994a650639a1" BootstrapContainer.SpanSm="4" />
+                                                        <Column Id="28952128-e892-4335-a535-ce4e9fddeae0" BootstrapContainer.SpanSm="4" />
+                                                        <Column Id="d3b1feed-d5f1-468c-aaa7-1487325e16b3" BootstrapContainer.SpanSm="4" />
+                                                    </Row.Children>
+                                                </Row>
+                                                <Row Id="1bbe3dab-cb5d-4f2a-bf62-7f1c245d47ad">
+                                                    <Row.Children>
+                                                        <Column Id="d750841d-279b-4bf7-aa83-e22188464e87" BootstrapContainer.SpanSm="12" />
+                                                    </Row.Children>
+                                                </Row>
+                                            </BootstrapContainer.Children>
+                                        </BootstrapContainer>
+                                    </BootstrapBox.Content>
+                                </BootstrapBox>
+                            </Add.Item>
+                        </Add>
+                        <Add Property="Panel.Children" Target="009d3b4a-2b60-4490-8183-43ef2ffd6632">
+                            <Add.Item>
+                                <Rectangle Color="#FF349C42" Background="#FF349C42" Id="a25cb93c-f7e7-4c32-97c7-05cd8aa0b9b0" Panel.Bounds="0,9,1024{5,2147483647},55{5,2147483647}" />
+                            </Add.Item>
+                        </Add>
+                        <Add Property="Panel.Children" Target="009d3b4a-2b60-4490-8183-43ef2ffd6632">
+                            <Add.Item>
+                                <Label RichText="&lt;Run Foreground=&quot;#FFFFFFFF&quot; FontWeight=&quot;Bold&quot; FontStyle=&quot;Normal&quot; &gt;BizBoss&lt;/Run&gt;" FontSize="28" Id="7187b67a-4816-4ef5-82d2-47d8b59b1b92" Panel.Bounds="44,17,5*{5,2147483647},5*{5,2147483647}" />
+                            </Add.Item>
+                        </Add>
+                        <Set Property="Content.AutoHeight" Value="True" Target="d2c6f022-6225-4902-bbc2-82e056966282" />
+                    </KeyFrame.Operations>
+                </KeyFrame>
+            </Scene.KeyFrames>
+        </Scene>
+    </Page.Scenes>
+</Page>

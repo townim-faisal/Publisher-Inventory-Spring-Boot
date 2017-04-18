@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${page_title}">Add or Update User</title>
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<div style="width:500px; margin:0 auto;">
+
+   <!--<div th:if="${addNewEndUser.id} == '0'"> <h1>Add New User</h1></div>
+    <div th:if="${addNewEndUser.id} != '0'"> <h1>Update User</h1></div>-->
+
+    <h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">Add or Update User</h1>
+
+<form class="addUserForm" role="form" action="#" th:action="@{/user/new-user}" th:object="${addNewEndUser}" method="post">
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >User Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">User not Saved </div>
+
+
+    <input type="hidden" th:field="*{id}" readonly="readonly" />
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('publisher')}? 'has-error'">
+        <label class="required">Publisher Name</label>
+        <!--<input class="form-control hideOnClick" type="text" th:field="*{facebook}" placeholder="Enter user's facebook link"/>-->
+        <select class="form-control pub" th:field="*{publisher}">
+            <option value="">Select Publisher</option>
+            <option th:each="publisher : ${publishers}"
+                    th:value="${publisher.id}"
+                    th:text="${publisher.name}">
+            </option>
+        </select>
+        <p th:if="${#fields.hasErrors('publisher')}" class="label label-danger" th:errors="*{publisher}">publisher Error</p>
+    </div>
+
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+        <label class="required">User Name</label>
+        <input class="form-control hideOnClick" type="text" th:field="*{name}" placeholder="Assign user name"/>
+        <p th:if="${#fields.hasErrors('name')}" class="label label-danger" th:errors="*{name}">Name Error</p>
+    </div>
+
+    <div class="form-group">
+        <label class="required">Role</label>
+            <div th:each="role : ${userRoles}">
+                <input type="checkbox" th:field="*{roles}" th:value="${role.id}" />
+                <label th:text="${role.role}">example</label>
+            </div>
+    </div>
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
+        <label class="required">Password</label>
+        <input class="form-control hideOnClick" type="password" th:field="*{password}" placeholder="Assign user password"/>
+        <p th:if="${#fields.hasErrors('password')}" class="label label-danger" th:errors="*{password}">Password Error</p>
+    </div>
+
+    <div class="form-group">
+        <label class="required">Status</label>
+
+            <div>
+                <input type="radio" th:field="*{isEnabled}" th:value="${0}" />
+                <label th:text="${'INACTIVE'}">Wireframe</label>
+            </div>
+            <div>
+                <input type="radio" th:field="*{isEnabled}" th:value="${1}" />
+                <label th:text="${'ACTIVE'}">Wireframe</label>
+            </div>
+    </div>
+
+    <a th:href="@{/user/all-user?names=}" class="btn btn-warning" style="width: 100px; margin-right: 50px; margin-left: 30px">Cancel</a>
+
+    <button type="reset" class="btn btn-danger" style="width: 100px; margin-right: 50px;">Reset</button>
+
+    <button th:if="${addNewEndUser.id} == '0'" type="submit" class="btn btn-success" style="width: 100px">Add</button>
+    <button th:if="${addNewEndUser.id} != '0'" type="submit" class="btn btn-success" style="width: 100px">Update</button>
+
+</form>
+</div>
+<script type="text/javascript">
+
+    $.validator.addMethod("customRequired", function(value) {
+        return (value != '');
+    },'Publisher Required');
+
+     $(document).ready(function() {
+
+        $(".addUserForm").validate(
+                {
+                    rules: {
+                        name:{
+                            required: true
+                        },
+                        password:{
+                            required: true
+                        },
+                        publisher:{
+                            customRequired: true
+                        }
+                    },
+                    messages: {
+                        name: {
+                            required: "User must have a name."
+                        },
+                        password: {
+                            required: "There is no use without password."
+                        },
+                        publisher:{
+                            customRequired: "Please select a publisher."
+                        }
+                    },
+                    highlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-success has-success').addClass('text text-danger has-error');
+                    },
+                    unhighlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-danger has-error').addClass('text text-success has-success');
+                    }
+                }
+        );
+
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(".hideOnClick").click(function () {
+            $("#hideThis").hide();
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + '/user/all-user' + '"]').parent().addClass('active');
+    });
+</script>
+</body>
+</html>

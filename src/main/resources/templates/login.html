@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:pages="http://www.w3.org/1999/xhtml"
+      xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Login</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-home"></th:block>
+
+    <link rel="stylesheet" href="../public/resource/bootstrap-3.3.7-dist/css/bootstrap.css" th:href="@{/resource/bootstrap-3.3.7-dist/css/bootstrap.css}"/>
+    <script src="../public/resource/jquery/jquery-2.2.4.js" th:src="@{/resource/jquery/jquery-2.2.4.js}"></script>
+    <script src="../public/resource/bootstrap-3.3.7-dist/js/bootstrap.js" th:src="@{/resource/bootstrap-3.3.7-dist/js/bootstrap.js}"></script>
+
+</head>
+    <div style="width: 300px;margin:0 auto;">
+
+        <div class="alert alert-danger" th:if="${param.error}">
+            Invalid username and password.
+        </div>
+        <div class="alert alert-success" th:if="${param.logout}">
+            You have been logged out.
+        </div>
+
+        <form name="form" th:action="@{/login}" method="post">
+
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <!--<label for="username" class="required sr-only">Username</label>-->
+            <label for="username" class="required">Username</label>
+            <input class="form-control" type="text" id="username" name="username"  placeholder="username"/>
+            <!--<label for="password" class="required sr-only">Password</label>-->
+            <label for="password" class="required">Password</label>
+
+            <!--<input class="form-control" type="password" id="password" name="password" data-toggle="tooltip" data-placement="right" title="Press and hold to view password" placeholder="Password"
+                   style="width: 86%; border-bottom-right-radius: 0em; border-top-right-radius: 0em" >-->
+
+            <input class="form-control" type="password" id="password" name="password" placeholder="Password" style="width: 86%; border-bottom-right-radius: 0em; border-top-right-radius: 0em" >
+
+            <span class="form-control" id="password-btn" style="width: 14%; float: right; margin-top: -11.4%; margin-right: 1px; border-bottom-left-radius: 0em; border-top-left-radius: 0em; background-color: lightgrey">
+                <i id="icon-change" class="glyphicon icon-eye-close glyphicon-eye-close " style="color: darkorange"></i>
+            </span>
+            </input>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-lg btn-success btn-block">Sign in</button>
+            </div>
+
+        </form>
+    </div>
+
+<script>
+    var timeoutId = 0;
+    var $button = $("#password-btn");
+    var $box = $("#password");
+    var $icon = $("#icon-change");
+
+    $button.mousedown(function() {
+        timeoutId = setTimeout(function(){
+            showPass('text');
+        }, 300);
+        $icon.removeClass("glyphicon icon-eye-close glyphicon-eye-close");
+        $icon.addClass("glyphicon icon-eye-open glyphicon-eye-open");
+    });
+
+    $button.mouseup( function() {
+        clearTimeout(timeoutId);
+        showPass('password');
+        $icon.removeClass("glyphicon icon-eye-open glyphicon-eye-open");
+        $icon.addClass("glyphicon icon-eye-close glyphicon-eye-close");
+    });
+
+    function showPass(val){
+        $box.prop('type', val);
+    }
+</script>
+
+<!--<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>-->
+
+</html>

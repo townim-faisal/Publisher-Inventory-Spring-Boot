@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${page_title}">Add or Update BinderReceive</title>
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<div style="width:500px; margin:0 auto;">
+
+   <!--<div th:if="${addNewBinderReceive.id} == '0'"> <h1>Add New BinderReceive</h1></div>
+    <div th:if="${addNewBinderReceive.id} != '0'"> <h1>Update BinderReceive</h1></div>-->
+    <h1 th:text="${page_title}"></h1>
+
+<form class="addBinderReceiveForm" role="form" action="#" th:action="@{/binderReceive/orders}" th:object="${addNewBinderReceive}" method="post">
+
+    <!--<div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >BinderReceive Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">BinderReceive not Saved </div>-->
+
+    <input type="hidden" th:field="*{id}" readonly="readonly" />
+    <input type="hidden" th:field="*{publisher}" readonly="readonly" />
+
+    <div class="form-group">
+        <label>Date</label>
+        <input id="datepicker" class="form-control hideOnClick" type="date" th:field="*{orderReceiveDate}"/>
+    </div>
+    
+    <div class="form-group">
+        <label>Binder</label>
+        <select class="form-control ui search selection dropdown binder-select" name="binders" id="binders" th:field="*{binder}">
+            <option value="">Select Binder</option>
+        </select>
+    </div>
+
+    <div class="form-group" >
+        <table class="table table-striped" id="tableId">
+            <thead>
+            <tr>
+                <th><input class='check_all' type='checkbox' onclick="select_all()"/></th>
+                <th>Sl</th>
+                <th>Orders</th>                
+            </tr>
+            </thead>
+
+            <!--New Order-->
+            <tbody th:if="${addNewBinderReceive.id}==0">
+            <tr>
+                <td><input type='checkbox' class='case'/></td>
+                <td>1.</td>
+                <td>
+                    <div class="form-group">
+                        <select class="form-control orders0" name="binderOrders[0].id">
+                        </select>
+                    </div>
+                </td>                
+            </tr>
+            </tbody>
+
+            <!--Update Order--> <!--Not in use yet-->
+            <tbody th:if="${addNewBinderReceive.id}>0">
+            <tr th:each="binderOrders, iterator : ${addNewBinderOrderDetails}">
+                <td><input type='checkbox' class='case'/></td>
+                <td th:text="${iterator.index+1}">1.</td>
+                <td>
+                    <div class="form-group">
+                        <label>Orders</label>
+                        <select class="form-control " id="orders" th:field="*{binder}">
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="button" class='delete'>- Delete</button>
+    <button type="button" class='addmore'>+ Add More</button>
+
+    <!--<a class="btn btn-success" th:if="${addNewBinderReceive.id} == '0'" href="/binderReceive/new"></a>-->
+    <button th:if="${addNewBinderReceive.id} == '0'" type="submit" class="btn btn-success" style="width: 100px">Add</button>
+</form>
+</div>
+
+
+
+</body>
+<script type="text/javascript">
+
+    $.validator.addMethod("customphone", function(value, element, regexpr) {
+        return regexpr.test(value);
+    }, "ERROR from customphone javascript method.");
+
+
+    $(document).ready(function() {
+
+        $(".addBinderReceiveForm").validate(
+                {
+                    rules: {
+                        name:{
+                            required: true
+                        },
+                        phone:{
+                            required : true,
+                            customphone:/^[0-9]*$/,
+                            maxlength: 13,
+                            remote : {
+                                url: "/binderReceive/isPhoneExist",
+                                /*url: "/binderReceive/isIdExist",*/
+                                type: "get",
+                                data: {
+                                    phone: function() {
+                                        return $("#phone").val();
+                                    },
+                                    id: function() {
+                                        return $("#id").val();
+                                    }
+
+                                }
+                            }
+                        },
+                        email:{
+                            email: true,
+                            remote : {
+                                url: "/binderReceive/isEmailExist",
+                                type: "get",
+                                data: {
+                                    email: function() {
+                                        return $("#email").val();
+                                    },
+                                    id: function() {
+                                        return $("#id").val();
+                                    }
+                                }
+                            }
+                        },
+                    },
+                    messages: {
+                        name: {
+                            required: "BinderReceive must have a name."
+                        },
+                        phone: {
+                            required: "Phone number required.",
+                            remote: "Other binderReceive is using this phone number.",
+                            customphone: "Please insert digits only.",
+                            maxlength: "Phone no. can be maximum 13 characters long."
+                        },
+                        email: {
+                            email: "Valid email address required.",
+                            remote: "Other binderReceive is using this email."
+                        }
+                    },
+                    highlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-success has-success').addClass('text text-danger has-error');
+                    },
+                    unhighlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-danger has-error').addClass('text text-success has-success');
+                    },
+                }
+        );
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".hideOnClick").click(function () {
+            $("#hideThis").hide();
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + '/binderReceive/all-binderReceive' + '"]').parent().addClass('active');
+    });
+</script>
+
+<!--Different Multiple-->
+<script>
+    $(document).ready(function () {
+        var i= $("#tableId tbody tr").length;
+        console.log("Just Loaded, value of i: "+ i);
+
+        var bindersDDL = $('#binders');
+        bindersDDL.change(function () {
+
+            i = 0;
+        });
+
+        $(".addmore").on('click',function(){
+            console.log("Adding in i :"+i);
+            var data='<tr th:object="${addNewBinderReceive}"><td><input type="checkbox" class="case"/></td><td>'+(i+1)+'.</td>';
+            data += '<td>' +
+                    '<select class="form-control orders'+(i)+'" name="binderOrders['+(i)+'].id">' +
+                    '</select>' +
+                    '</td>' +
+                    '</tr>';
+            $('table').append(data);
+            i++;
+    });
+
+    $(".delete").on('click', function() {
+        $('.case:checkbox:checked').parents("tr").remove();
+
+        i=$("#tableId tbody tr").length;
+
+    });
+
+    });
+
+</script>
+
+<script>
+    function select_all() {
+        $('input[class=case]:checkbox').each(function(){
+            if($('input[class=check_all]:checkbox:checked').length == 0){
+                $(this).prop("checked", false);
+            } else {
+                $(this).prop("checked", true);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    $('#book-select')
+            .dropdown();
+</script>
+
+<script>
+    $('.binder-select')
+            .dropdown();
+</script>
+
+
+<!--No Binder Selected-->
+<script th:inline="javascript">
+    $(document).ready(function () {
+
+        var bindersDDL = $('#binders');
+        var i = $("#tableId tbody tr").length;
+        //var confirmedOrdersDDL = $('.orders' + (i-1));
+        var confirmedOrdersDDL = $('.orders' + (i));
+
+        $.ajax({
+            url: 'allBinders',
+            method: 'get',
+            dataType: 'json',
+            success: function (data) {
+                bindersDDL.append($('<option/>', {value: -1, text: 'Select Binder'}));
+                confirmedOrdersDDL.append($('<option/>', {value: -1, text: 'Select Order'}));
+                confirmedOrdersDDL.prop('disabled', true);
+                $(data).each(function (index, item) {
+                    bindersDDL.append($('<option/>', {value: item.id, text: item.name}));
+                });
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+
+        bindersDDL.change(function () {
+            //$('#tableId tbody').empty();
+            if ($(this).val() == "-1") {
+                confirmedOrdersDDL.empty();
+                confirmedOrdersDDL.append($('<option/>', {value: -1, text: 'Select Order'}));
+                confirmedOrdersDDL.val('-1');
+                confirmedOrdersDDL.prop('disabled', true);
+
+                $('#tableId tbody').remove();
+            }
+            else {
+                $.ajax({
+                    url: 'ordersByBinder/' + $(this).val(),
+                    method: 'get',
+                    dataType: 'json',
+                    data: {id: $(this).val()},
+                    success: function (data) {
+                        confirmedOrdersDDL.empty();
+                        confirmedOrdersDDL.append($('<option/>', {value: -1, text: 'Select Order'}));
+                        $(data).each(function (index, item) {
+                            confirmedOrdersDDL.append($('<option/>', {value: item.id, text: item.orderId}));
+                        });
+                        confirmedOrdersDDL.val('-1');
+                        confirmedOrdersDDL.prop('disabled', false);
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+
+<!--Binder Selected and add more order-->
+<script th:inline="javascript">
+    $(document).ready(function () {
+
+        var i = $("#tableId tbody tr").length;
+        var bindersDDL = $('#binders');
+
+        bindersDDL.change(function () {
+            $('#tableId tbody').remove();
+            i= $("#tableId tbody tr").length-1;
+            });
+
+        $( ".addmore" ).click(function() {
+            var binderId = $("#binders option:selected").val();
+            var i = $("#tableId tbody tr").length;
+            var confirmedOrdersDDL = $('.orders' + (i-1));
+            console.log(console.log("After Adding, value of i: "+ (i-1)));
+
+            $.ajax({
+                url: 'ordersByBinder/' + binderId,
+                method: 'get',
+                dataType: 'json',
+                data: {id: $(this).val()},
+                success: function (data) {
+                    confirmedOrdersDDL.empty();
+                    confirmedOrdersDDL.append($('<option/>', {value: -1, text: 'Select Order'}));
+                    $(data).each(function (index, item) {
+                        confirmedOrdersDDL.append($('<option/>', {value: item.id, text: item.orderId}));
+                    });
+                    confirmedOrdersDDL.val('-1');
+                    confirmedOrdersDDL.prop('disabled', false);
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+        });
+    });
+</script>
+
+</html>

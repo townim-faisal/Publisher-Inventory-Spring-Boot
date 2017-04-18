@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:pages="http://www.w3.org/1999/xhtml"
+      xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${page_title}">Show All Publishers</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+<h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">All Publisher</h1>
+
+
+<div style="width:800px; margin:0 auto;">
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <form class="input-group" action="#" role="form" th:action="@{/publisher/all-publisher}" th:object="${publisherNames}" method="get">
+                            <input type="text" class="form-control input-sm" id="key" name="key" placeholder="Publisher name..." th:value="${searchKey}"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-info btn-lg" type="submit">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail-->
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+
+                <div class="modal-body" id="showPublisherDetail">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <a href="#" id="updatelink" class="btn btn-warning">Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal Delete-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-body" id="dialog" title="Delete Confirmation">
+                <i class="glyphicon glyphicon-warning-sign" style="color: #c9302c;font-size: 30px; padding-left:45%"></i>
+                <br>Are you sure about deleting <span class="name-url"></span>?</br>
+                <br>This operation can not be undone.</br>
+                <br>Addition Info:</br>
+                <p class="serial-url"></p>
+                <br>Note:</br>
+                <p style="color: red">This will delete all associated data (i.e. Users, Books and others.)  </p>
+
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px">
+        <a class="btn btn-success" href="#" th:href="@{/publisher/new-publisher}" style="text-decoration: none; color: white">Add new Publisher</a>
+    </div>
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >Publisher Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">Publisher not Saved </div>
+
+     <table class="table table-striped">
+         <thead>
+             <tr>
+                 <th>Sl</th>
+                 <th>ID</th>
+                 <th>Publisher</th>
+                 <th>Phone</th>
+                 <th>Email</th>
+                 <th>Details</th>
+                 <th>Update</th>
+                 <th>Delete</th>
+             </tr>
+         </thead>
+         <tbody>
+
+             <tr th:each="publisher, iterator : ${publisherList}">
+                 <td class="context" th:text="${iterator.index +offset+1}">Sl</td>
+                 <td class="context" th:text="${publisher.id}">Sl</td>
+                 <td class="context" th:text="${publisher.name}">title</td>
+                 <td class="context" th:text="${publisher.phone}">phone</td>
+                 <td class="context" th:text="${publisher.email}">email</td>
+
+                 <td> <a class="btn btn-info singlepublisher" data-toggle="modal" data-target="#detailModal" data-th-attr="publisherid=${publisher.id}">Details</a></td>
+                 <td><a class="btn btn-warning" href="#" th:href="@{/publisher/edit/} + ${publisher.id}" style="text-decoration: none; color: white">Update</a></td>
+                 <td><a class="btn btn-danger confirm-delete"  href="#" th:href="@{/publisher/delete/} + ${publisher.id}" data-th-attr="serial=${iterator.index +offset+1},name=${publisher.name}" style="text-decoration: none; color: white">Delete</a></td>
+
+             </tr>
+         </tbody>
+     </table>
+
+
+    <nav th:if="${totalElements}!=0" aria-label="...">
+        <ul class="pagination pagination-sm">
+            <li>
+                <a href="#" th:href="@{/publisher/all-publisher(key=${searchKey},page=${previousPage},size=${elementPerPage})}" tabindex="-1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li th:each="i, interator : ${#numbers.sequence( 1, numberOfPage)}" th:class="${currentPage}==${interator.index} ? active">
+                <a class="page-link" href="#" th:text="${interator.index + 1}" th:href="@{/publisher/all-publisher(key=${searchKey},page=${interator.index},size=${elementPerPage})}">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#" th:href="@{/publisher/all-publisher(key=${searchKey},page=${nextPage},size=${elementPerPage})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!--Modal Script Detail-->
+<script>
+    $(document).ready(function () {
+        $('a.singlepublisher').click(function () {
+            $.ajax({
+                url: "/publisher/publisher-detail/"+$(this).attr('publisherid'),
+                success: function (data) {
+
+                    $('#showPublisherDetail').html(
+                            '<dl class="dl-horizontal">' +
+                                '<dt>Name:</dt>' +
+                                    '<dd>'+data.name+'</dd>' +
+                                /*'<dt>Date Of Birth:</dt>' +
+                                    '<dd>'+birthDate+'</dd>' +*/
+                                '<dt>Phone:</dt>' +
+                                    '<dd>'+data.phone+'</dd>' +
+                                '<dt>Email:</dt>' +
+                                    '<dd>'+data.email+'</dd>' +
+                                 '<dt>Address:</dt>' +
+                                    '<dd class="modal-wrap">'+data.address+'</dd>' +
+                            '</dl>');
+
+                    $('#myModalLabel').html(data.name);
+                    $('#updatelink').attr('href', '/publisher/edit/'+data.id);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $( "#key" ).autocomplete({
+            source: "/publisher/search/"
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+    });
+</script>
+
+<script>
+    $(function() {
+
+        var mark = function() {
+
+            // Read the keyword
+            var keyword = $("input[name='key']").val();
+
+            // Determine selected options
+            var options = {
+                "each": function(element) {
+                    setTimeout(function() {
+                        $(element).addClass("animate");
+                    }, 250);
+                }
+            };
+            $("input[name='opt[]']").each(function() {
+                options[$(this).val()] = $(this).is(":checked");
+            });
+
+            // Mark the keyword inside the context
+            $(".context").unmark();
+            $(".context").mark(keyword, options);
+        };
+
+        $("input[name='key']").on("keyup", mark);
+        $("input[type='checkbox']").on("change", mark);
+        mark();
+
+    });
+
+</script>
+
+<!--Modal Script Delete-->
+<script
+    src="../public/resource/jquery/delete-confirmation.js" th:src="@{/resource/jquery/delete-confirmation.js}">
+</script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<div th:fragment="head" xmlns="http://www.w3.org/1999/html" >
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="../public/resource/jquery/jquery-ui.css" th:href="@{/resource/jquery/jquery-ui.css}"/>
+    <link rel="stylesheet" href="../public/resource/bootstrap-3.3.7-dist/css/bootstrap.css" th:href="@{/resource/bootstrap-3.3.7-dist/css/bootstrap.css}"/>
+    <link rel="stylesheet" href="../public/resource/customcss/customstyles.css" th:href="@{/resource/customcss/customstyles.css}"/>
+    <link rel="stylesheet" href="../public/resource/multipleselectors/semantic.css" th:href="@{/resource/multipleselectors/semantic.css}"/>
+
+    <script src="../public/resource/jquery/jquery-2.2.4.js" th:src="@{/resource/jquery/jquery-2.2.4.js}"></script>
+    <script src="../public/resource/jquery/jquery.validate.js" th:src="@{/resource/jquery/jquery.validate.js}"></script>
+    <script src="../public/resource/bootstrap-3.3.7-dist/js/bootstrap.js" th:src="@{/resource/bootstrap-3.3.7-dist/js/bootstrap.js}"></script>
+    <script src="../public/resource/jquery/jquery-ui.js" th:src="@{/resource/jquery/jquery-ui.js}"></script>
+    <script src="../public/resource/jquery/logout.js" th:src="@{/resource/jquery/logout.js}"></script>
+    <script src="../public/resource/jquery/logout.js" th:src="@{/resource/jquery/logout.js}"></script>
+    <script src="../public/resource/mark/jquery.mark.min.js" th:src="@{/resource/mark/jquery.mark.min.js}"></script>
+    <script src="../public/resource/multipleselectors/semantic.js" th:src="@{/resource/multipleselectors/semantic.js}"></script>
+
+    <noscript >
+        <link rel="stylesheet" href="../public/resource/customcss/customstyles.css" th:href="@{/resource/customcss/customstyles.css}"/>
+
+        <div style="text-align: center; color: white; font-weight: bold; background-color: darkred">
+            Javascript is disabled. Please enable Javascript for best performance.
+        </div>
+    </noscript>
+</div>
+
+<div th:fragment="navbar-right">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <a class="navbar-brand" th:href="@{/home}" th:text="${publisher_name_navbar}">Inventory Management</a>
+    </div>
+</div>
+
+<div th:fragment="navbar-username-logout-settings">
+
+    <ul class="nav navbar-nav navbar-right">
+
+        <!--<li th:if="${#httpServletRequest.remoteUser != null}">
+            <a href="#"><span class="glyphicon glyphicon-user" style="margin-right: -100px"></span></a>
+        </li>-->
+
+       <!--<li th:if="${#httpServletRequest.remoteUser != null}">
+            <a href="#" th:utext="${#httpServletRequest.remoteUser}">User</a>
+        </li>-->
+
+        <li th:if="${#httpServletRequest.remoteUser != null}">
+            <a href="#">
+                <span class="glyphicon glyphicon-user"></span>
+                <span th:utext="${#httpServletRequest.remoteUser}"></span>
+            </a>
+        </li>
+
+        <li th:if="${#httpServletRequest.remoteUser != null}">
+            <a href="#" th:href="@{/update/edit-user}"><span class="glyphicon glyphicon-cog"></span>Settings</a>
+        </li>
+
+        <li th:if="${#httpServletRequest.remoteUser == null}">
+            <a href="#" th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span>Login</a>
+        </li>
+
+        <li th:if="${#httpServletRequest.remoteUser != null}">
+            <a href="#" id="logout-btn">
+                <span class="glyphicon glyphicon-log-out"></span>
+                Log Out
+            </a>
+            <form th:action="@{/logout}" method="post" id="logout-form">
+            </form>
+        </li>
+
+    </ul>
+
+</div>
+
+<div th:fragment="navbar-home">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div th:include="layout/headerinc :: navbar-right"></div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li th:if="${#httpServletRequest.remoteUser != null}">
+                        <a href="#" th:text="${#httpServletRequest.remoteUser}"></a>
+                    </li>
+                    <li th:if="${#httpServletRequest.remoteUser == null}">
+                        <a href="#" th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                    </li>
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</div>
+
+<div th:fragment="navbar-admin">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div th:include="layout/headerinc :: navbar-right"></div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li id="selected" role="presentation"><a th:href="@{/city/all-city}">City</a></li>
+                    <li role="presentation"><a th:href="@{/area/all-area}">Area</a></li>
+                    <li role="presentation"><a th:href="@{/country/all-country}">Country</a></li>
+                    <li role="presentation"><a th:href="@{/publisher/all-publisher}">Publisher</a></li>
+                    <li><a th:href="@{/user/all-user}">Users</a></li>
+                    <li><a th:href="@{/role/new-role}">Create Role</a></li>
+                </ul>
+
+                <div th:include="layout/headerinc :: navbar-username-logout-settings"></div>
+
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</div>
+
+<div th:fragment="navbar-user">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div th:include="layout/headerinc :: navbar-right"></div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a th:href="@{/author/all-author}">Author</a></li>
+                    <li role="presentation"><a th:href="@{/binder/all-binder}">Binder</a></li>
+                    <li role="presentation"><a th:href="@{/category/all-category}">Category</a></li>
+                    <li role="presentation"><a th:href="@{/book/all-book}">Book</a></li>
+                    <li role="presentation"><a th:href="@{/inventory/all-inventory}">Inventory</a></li>
+                    <li role="presentation"><a th:href="@{/binderOrder/all-binderOrder}">Place Order</a></li>
+                    <li role="presentation"><a th:href="@{/binderReceive/all-binderReceive}">Receive Order</a></li>
+                 </ul>
+
+                <div th:include="layout/headerinc :: navbar-username-logout-settings"></div>
+
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</div>
+
+<div th:fragment="navbar-common">
+
+    <div  th:if="${authenticated} == true" >
+
+        <div  th:if="${user} == client" >
+            <div th:replace="layout/headerinc :: navbar-user"></div>
+        </div>
+
+        <div  th:if="${user} == superAdmin" >
+            <div th:replace="layout/headerinc :: navbar-admin"></div>
+        </div>
+
+    </div>
+
+    <!--<div  th:if="${ #authorization.expression('isAuthenticated()') and #strings.contains(#authentication.principal.authorities,'SUPER')}" >
+        <div th:replace="layout/headerinc :: navbar-admin"></div>
+    </div>
+
+    <div  th:if="${ #authorization.expression('isAuthenticated()') and #strings.contains(#authentication.principal.authorities,'USER')}" >
+        <div th:replace="layout/headerinc :: navbar-user"></div>
+    </div>-->
+</div>

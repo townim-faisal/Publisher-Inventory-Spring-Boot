@@ -1,0 +1,244 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:pages="http://www.w3.org/1999/xhtml"
+      xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${page_title}">Show All Users</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+<h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">All Users</h1>
+
+
+<div style="width:800px; margin:0 auto;">
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <form class="input-group" action="#" role="form" th:action="@{/user/all-user}" th:object="${userNames}" method="get">
+                            <input type="text" class="form-control input-sm" id="key" name="key" placeholder="User name..." />
+                            <span class="input-group-btn">
+                                <button class="btn btn-info btn-lg" type="submit">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+
+                <div class="modal-body" id="showUserDetail">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <a href="#" id="updatelink" class="btn btn-warning">Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal Delete-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-body" id="dialog" title="Delete Confirmation">
+                <i class="glyphicon glyphicon-warning-sign" style="color: #c9302c;font-size: 30px; padding-left:45%"></i>
+                <br>Are you sure about deleting <span class="name-url"></span>?</br>
+                <br>This operation can not be undone.</br>
+                <br>Addition Info:</br>
+                <p class="serial-url"></p>
+                <br>Note:</br>
+                <p style="color: red">This will delete all associated data (i.e. Users, Books and others.)  </p>
+
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px">
+        <a class="btn btn-success" href="#" th:href="@{/user/new-user}" style="text-decoration: none; color: white">Add new User</a>
+    </div>
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >User Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">User not Saved </div>
+
+     <table class="table table-striped">
+         <thead>
+             <tr>
+                 <th>Sl</th>
+                 <th>ID</th>
+                 <th>User</th>
+                 <th>Publisher</th>
+                 <th>Details</th>
+                 <th>Update</th>
+                 <th>Delete</th>
+             </tr>
+         </thead>
+         <tbody>
+             <tr th:each="user, iterator : ${userList}">
+                 <td class="context" th:text="${iterator.index +offset+1}">Sl</td>
+                 <td class="context" th:text="${user.id}">Sl</td>
+                 <td class="context" th:text="${user.name}">title</td>
+                 <td class="context" th:text="${user.publisher.name}">title</td>
+                 <!--<td th:text="${user.phone}">phone</td>-->
+                 <!--<td th:text="${user.code}">code</td>-->
+
+
+                 <td> <a class="btn btn-info singleuser" data-toggle="modal" data-target="#myModal" data-th-attr="userid=${user.id}">Details</a></td>
+                 <td><a class="btn btn-warning" href="#" th:href="@{/user/edit/} + ${user.id}" style="text-decoration: none; color: white">Update</a></td>
+                 <td><a class="btn btn-danger confirm-delete" href="#" th:href="@{/user/delete/} + ${user.id}" data-th-attr="serial=${iterator.index +offset+1},name=${user.name}" style="text-decoration: none; color: white">Delete</a></td>
+
+             </tr>
+         </tbody>
+     </table>
+
+
+    <nav th:if="${totalElements}!=0" aria-label="...">
+        <ul class="pagination pagination-sm">
+            <li>
+                <a  href="#" th:href="@{/user/all-user(key=${searchKey},page=${previousPage},size=${elementPerPage})}" tabindex="-1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li th:each="i, interator : ${#numbers.sequence( 1, numberOfPage)}" th:class="${currentPage}==${interator.index} ? active">
+                <a class="page-link" href="#" th:text="${interator.index + 1}" th:href="@{/user/all-user(key=${searchKey},page=${interator.index},size=${elementPerPage})}">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#" th:href="@{/user/all-user(key=${searchKey},page=${nextPage},size=${elementPerPage})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <!--<ul class="pagination pagination-lg">
+        <li th:each="i, interator : ${#numbers.sequence( 1, numberOfPage)}">
+            <a href="#" th:text="${interator.index + 1}" th:href="@{/user/all-user(key=${searchKey},page=${interator.index},size=${elementPerPage})}" >1</a>
+        </li>
+    </ul>-->
+
+
+</div>
+
+<!--Modal Script-->
+<script>
+    $(document).ready(function () {
+        $('a.singleuser').click(function () {
+            $.ajax({
+                url: "/user/user-detail/"+$(this).attr('userid'),
+                success: function (data) {
+                    /*var birthDate;
+                    var bDate;
+                    var bMonth;
+                    var bYear;
+                    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                    ];
+                    if(data.dateOfBirth!=null){
+                        bDate = new Date(data.dateOfBirth).getDate();
+                        bMonth = monthNames[(new Date(data.dateOfBirth).getMonth())];
+                        bYear = new Date(data.dateOfBirth).getFullYear();
+
+                        birthDate = bDate+'-'+bMonth+'-'+bYear;
+                    }
+                    else {
+                        birthDate = 'Not Available';
+                    }*/
+
+                    $('#showUserDetail').html(
+                            '<dl class="dl-horizontal">' +
+                                '<dt>Name:</dt>' +
+                                    '<dd>'+data.name+'</dd>' +
+                                /*'<dt>Date Of Birth:</dt>' +
+                                    '<dd>'+birthDate+'</dd>' +*/
+                                '<dt>Phone:</dt>' +
+                                    '<dd>'+data.phone+'</dd>' +
+                                '<dt>Email:</dt>' +
+                                    '<dd>'+data.email+'</dd>' +
+                                 '<dt>Address:</dt>' +
+                                    '<dd class="modal-wrap">'+data.address+'</dd>' +
+                            '</dl>');
+
+                    $('#myModalLabel').html(data.name);
+                    $('#updatelink').attr('href', '/user/edit/'+data.id);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $( "#key" ).autocomplete({
+            source: "/user/search/"
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+    });
+</script>
+
+<script>
+    $(function() {
+
+        var mark = function() {
+
+            // Read the keyword
+            var keyword = $("input[name='key']").val();
+
+            // Determine selected options
+            var options = {
+                "each": function(element) {
+                    setTimeout(function() {
+                        $(element).addClass("animate");
+                    }, 250);
+                }
+            };
+            $("input[name='opt[]']").each(function() {
+                options[$(this).val()] = $(this).is(":checked");
+            });
+
+            // Mark the keyword inside the context
+            $(".context").unmark();
+            $(".context").mark(keyword, options);
+        };
+
+        $("input[name='key']").on("keyup", mark);
+        $("input[type='checkbox']").on("change", mark);
+        mark();
+
+    });
+
+</script>
+
+<!--Modal Script Delete-->
+<script
+        src="../public/resource/jquery/delete-confirmation.js" th:src="@{/resource/jquery/delete-confirmation.js}">
+</script>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:pages="http://www.w3.org/1999/xhtml"
+      xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${page_title}">Detailed Order</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">All BinderOrder</h1>
+
+
+
+<div style="width:800px; margin:0 auto; padding-top: 1%" th:object="${binderOrder}">
+
+    <div th:if="${confirmation}!=null" th:text="${confirmation}" class="alert alert-success" id="hideThis" >Order Saved </div>
+
+    <table>
+        <tr>
+            <td style="padding:0 15px 0 15px;">
+                <h3>  Order No :  <span th:text="${OrderId}"></span></h3>
+            </td>
+            <td style="padding:0 15px 0 15px;">
+                <h3> Order Date : <span th:text="${orderDate}"></span></h3>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:10px 15px 0 15px;">
+                <h3> Binder : <span th:text="${binder}"></span></h3>
+                <h4> Status : <span th:text="${binderOrder.confirmationStatus.name()}"></span></h4>
+            </td>
+        </tr>
+    </table>
+
+    <!--Modal Delete-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-body" id="dialog" title="Delete Confirmation">
+                <i class="glyphicon glyphicon-warning-sign" style="color: #c9302c;font-size: 30px; padding-left:45%"></i>
+                <br>Are you sure about deleting <span style="font-weight: bold" th:text="${binderOrder.orderId}"></span>?</br>
+                <br>This operation can not be undone.</br>
+                <br>Addition Info:</br>
+                <p>Permanenet Remove Operation</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-top: 5%">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Sl</th>
+            <th>Items</th>
+            <th>Ordered Quantity</th>
+            <th>Price (unit)</th>
+            <th>Discount (unit)</th>
+            <th>Received Quantity</th>
+            <!--<th>Details</th>
+            <th>Update</th>
+            <th>Delete</th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="binderOrderBook, iterator : ${binderOrderBooks}">
+            <td class="context" th:text="${iterator.index +1}">Sl</td>
+            <td class="context" th:text="${binderOrderBook.book.name}">Id</td>
+            <td class="context" th:text="${binderOrderBook.orderQuantity}" >name</td>
+            <td class="context" th:text="${binderOrderBook.unitPrice}">phone</td>
+            <td class="context" th:text="${binderOrderBook.unitDiscount}">email</td>
+            <td class="context" th:text="${binderOrderBook.receivedQuantity}">email</td>
+
+            <!--<td><a class="btn btn-info singlebinderOrder" href="#" th:href="@{/binderOrder/binderOrder-detail/} + ${binderOrder.id}">Details</a></td>
+            <td><a class="btn btn-warning" href="#" th:href="@{/binderOrder/edit/} + ${binderOrder.id}" style="text-decoration: none; color: white">Update</a></td>
+            <td><a class="btn btn-danger confirm-delete" href="#" th:href="@{/binderOrder/delete/} + ${binderOrder.id}" data-th-attr="serial=${iterator.index +offset+1},name=${binderOrder.id}" style="text-decoration: none; color: white">Delete</a></td>-->
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <table>
+        <tbody>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Total Items</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${totalItemQuantities}"></td>
+        </tr>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Sub Total</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${orderSubTotal}"></td>
+            <td style="padding:0 15px 0 0;">BDT</td>
+        </tr>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Discount</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${discount}"></td>
+            <td style="padding:0 15px 0 0;">BDT</td>
+        </tr>
+        <tr>
+            <td style="padding:0 15px 0 15px;">Total Amount</td>
+            <td style="padding:0 15px 0 15px;">:</td>
+            <td style="padding:0 15px 0 15px;" th:text="${orderTotalAmount}"></td>
+            <td style="padding:0 15px 0 0;">BDT</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="padding-top: 5%">
+        <a href="/binderOrder/all-binderOrder?names=" class="btn btn-info" style="width: 100px; margin-right: 50px; margin-left: 30px">Orders</a>
+
+        <span th:if="${binderOrder.confirmationStatus.name()=='NOT_CONFIRMED'}" >
+            <a href="#" th:href="@{/binderOrder/delete/} + ${binderOrderId}" class="btn btn-danger confirm-delete" style="width: 100px; margin-right: 50px;">Delete</a>
+            <a href="#" th:href="@{/binderOrder/edit/} + ${binderOrderId}" class="btn btn-warning" style="width: 100px; margin-right: 50px;">Update</a>
+            <a href="#" th:href="@{/binderOrder/setOrderStatus/} + ${binderOrderId}" class="btn btn-success" style="width: 100px">Confirm</a>
+        </span>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+    });
+</script>
+
+<!--Modal Script Delete-->
+<script
+        src="../public/resource/jquery/delete-confirmation.js" th:src="@{/resource/jquery/delete-confirmation.js}">
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${page_title}">Add or Update Area</title>
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<div style="width:500px; margin:0 auto;">
+
+   <!--<div th:if="${addNewArea.id} == '0'"> <h1>Add Area</h1></div>
+    <div th:if="${addNewArea.id} != '0'"> <h1>Update Area</h1></div>-->
+
+    <h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}"></h1>
+
+<form class="addAreaForm" role="form" action="#" th:action="@{/area/new-area}" th:object="${addNewArea}" method="post">
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >Area Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">Area not Saved </div>
+
+
+    <input type="hidden" th:field="*{id}" readonly="readonly" />
+
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+        <label class="required">Area Name</label>
+        <input class="form-control hideOnClick" type="text" th:field="*{name}" placeholder="Assign area name"/>
+        <p th:if="${#fields.hasErrors('name')}" class="label label-danger" th:errors="*{name}">Name Error</p>
+    </div>
+
+    <a th:href="@{/area/all-area?names=}" class="btn btn-warning" style="width: 100px; margin-right: 50px; margin-left: 30px">Cancel</a>
+
+    <button type="reset" class="btn btn-danger" style="width: 100px; margin-right: 50px;">Reset</button>
+
+    <button th:if="${addNewArea.id} == '0'" type="submit" class="btn btn-success" style="width: 100px">Add</button>
+    <button th:if="${addNewArea.id} != '0'" type="submit" class="btn btn-success" style="width: 100px">Update</button>
+
+</form>
+</div>
+<script type="text/javascript">
+
+    $.validator.addMethod("customphone", function(value, element, regexpr) {
+        return regexpr.test(value);
+    }, "ERROR from customphone javascript method.");
+
+            $(document).ready(function() {
+
+        $(".addAreaForm").validate(
+                {
+                    rules: {
+                        name:{
+                            required: true
+                        }
+                    },
+                    messages: {
+                        name: {
+                            required: "Area must have a name."
+                        }
+                    },
+                    highlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-success has-success').addClass('text text-danger has-error');
+                    },
+                    unhighlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-danger has-error').addClass('text text-success has-success');
+                    },
+                }
+        );
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".hideOnClick").click(function () {
+            $("#hideThis").hide();
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('a[href="' + '/area/all-area' + '"]').parent().addClass('active');
+    });
+</script>
+</body>
+</html>

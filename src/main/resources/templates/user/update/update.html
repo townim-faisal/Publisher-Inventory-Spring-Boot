@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${page_title}">Add or Update User</title>
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<div style="width:500px; margin:0 auto;">
+
+    <h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">Update User</h1>
+
+<form class="updateUserForm" role="form" action="#" th:action="@{/update/update-user}" th:object="${updateEndUser}" method="POST">
+    <!--<h2 class="form-signin-heading">Update Details</h2>-->
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >User Updated </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">User not Updated </div>
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
+        <label>Password</label>
+        <input class="form-control hideOnClick" type="password" id="password" name="password" th:field="*{password}" placeholder="Assign user password"/>
+        <p th:if="${#fields.hasErrors('password')}" class="label label-danger" th:errors="*{password}">Password Error</p>
+    </div>
+
+    <div class="form-group" >
+        <label>Confirm Password</label>
+        <input class="form-control hideOnClick" type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password"/>
+        <p th:if="${#fields.hasErrors('password')}" class="label label-danger" th:errors="*{password}">Password Error</p>
+    </div>
+
+    <!--<a th:href="@{/user/all-user?names=}" class="btn btn-warning" style="width: 100px; margin-right: 50px; margin-left: 30px">Cancel</a>-->
+    <a th:href="@{/home}" class="btn btn-warning" style="width: 100px; margin-right: 50px; margin-left: 30px">Cancel</a>
+
+    <button type="submit" class="btn btn-success" style="width: 100px">Update</button>
+
+</form>
+</div>
+<script type="text/javascript">
+
+            $(document).ready(function() {
+
+        $(".updateUserForm").validate(
+                {
+                    rules: {
+                        name:{
+                            required: true
+                        },
+                        password:{
+                            required: true
+                        },
+                        confirm_password: {
+                            required: true,
+                            equalTo: "#password"
+                        }
+
+                    },
+                    messages: {
+                        name: {
+                            required: "User must have a name."
+                        },
+                        password: {
+                            required: "There is no use without password."
+                        },
+                        confirm_password: {
+                            required: "You are forgetting this.",
+                            equalTo: "Password don't match."
+                        }
+                    },
+                    highlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-success has-success').addClass('text text-danger has-error');
+                    },
+                    unhighlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-danger has-error').addClass('text text-success has-success');
+                    }
+                }
+        );
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".hideOnClick").click(function () {
+            $("#hideThis").hide();
+        });
+    });
+</script>
+
+</body>
+</html>

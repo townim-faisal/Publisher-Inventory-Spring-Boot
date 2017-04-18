@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${page_title}">Add or Update Country</title>
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+
+<div style="width:500px; margin:0 auto;">
+
+   <!--<div th:if="${addNewCountry.id} == '0'"> <h1>Add Country</h1></div>
+    <div th:if="${addNewCountry.id} != '0'"> <h1>Update Country</h1></div>-->
+
+    <h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">Add or Update Country</h1>
+
+<form class="addCountryForm" role="form" action="#" th:action="@{/country/new-country}" th:object="${addNewCountry}" method="post">
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >Country Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">Country not Saved </div>
+
+
+    <input type="hidden" th:field="*{id}" readonly="readonly" />
+
+    <!--<div class="form-group">
+        <label>Publisher Name</label>
+        &lt;!&ndash;<input class="form-control hideOnClick" type="text" th:field="*{facebook}" placeholder="Enter country's facebook link"/>&ndash;&gt;
+        <select class="form-control" th:field="*{publisher}">
+            <option value="">Select Publisher</option>
+            <option th:each="publisher : ${publishers}"
+                    th:value="${publisher.id}"
+                    th:text="${publisher.name}">
+            </option>
+        </select>
+    </div>-->
+
+
+    <div class="form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+        <label class="required">Country Name</label>
+        <input class="form-control hideOnClick" type="text" th:field="*{name}" placeholder="Assign country name"/>
+        <p th:if="${#fields.hasErrors('name')}" class="label label-danger" th:errors="*{name}">Name Error</p>
+    </div>
+
+    <!--<div class="form-group">
+        <label>Role</label>
+        &lt;!&ndash;<input class="form-control hideOnClick" type="text" th:field="*{facebook}" placeholder="Enter country's facebook link"/>&ndash;&gt;
+        <select class="form-control" th:field="*{roles}">
+            <option value="">Select Access Permission</option>
+            <option th:each="role : ${userRoles}"
+                    th:value="${role.id}"
+                    th:text="${role.role}">
+            </option>
+        </select>
+    </div>-->
+
+    <!--<div class="form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+        <label>Password</label>
+        <input class="form-control hideOnClick" type="password" th:field="*{password}" placeholder="Assign country password"/>
+        <p th:if="${#fields.hasErrors('password')}" class="label label-danger" th:errors="*{password}">Password Error</p>
+    </div>-->
+
+    <!--<div class="form-group">
+        <label>Status</label>
+        &lt;!&ndash;<input class="form-control hideOnClick" type="text" th:field="*{facebook}" placeholder="Enter country's facebook link"/>&ndash;&gt;
+        <select class="form-control" th:field="*{status}">
+            <option value="">Select Status</option>
+            <option th:each="status : ${countryStatus}"
+                    th:value="${status}"
+                    th:text="${status}">
+            </option>
+        </select>
+    </div>-->
+
+    <a th:href="@{/country/all-country?names=}" class="btn btn-warning" style="width: 100px; margin-right: 50px; margin-left: 30px">Cancel</a>
+
+    <button type="reset" class="btn btn-danger" style="width: 100px; margin-right: 50px;">Reset</button>
+
+    <button th:if="${addNewCountry.id} == '0'" type="submit" class="btn btn-success" style="width: 100px">Add</button>
+    <button th:if="${addNewCountry.id} != '0'" type="submit" class="btn btn-success" style="width: 100px">Update</button>
+
+</form>
+</div>
+<script type="text/javascript">
+
+    $.validator.addMethod("customphone", function(value, element, regexpr) {
+        return regexpr.test(value);
+    }, "ERROR from customphone javascript method.");
+
+            $(document).ready(function() {
+
+        $(".addCountryForm").validate(
+                {
+                    rules: {
+                        name:{
+                            required: true
+                        },
+                        /*phone:{
+                            required : true,
+                            customphone:/^[0-9]*$/,
+                            maxlength: 13,
+                            remote : {
+                                /!*url: "/country/isPhoneExist",*!/
+                                url: "/country/isIdExist",
+                                type: "get",
+                                data: {
+                                    phone: function() {
+                                        return $("#phone").val();
+                                    },
+                                    id: function() {
+                                        return $("#id").val();
+                                    }
+
+                                }
+                            }
+                        },
+                        email:{
+                            email: true
+                        },*/
+                    },
+                    messages: {
+                        name: {
+                            required: "Country must have a name."
+                        },
+                        /*phone: {
+                            required: "Phone number required.",
+                            remote: "Other country is using this phone number.",
+                            customphone: "Please insert digits only.",
+                            maxlength: "Phone no. can be maximum 13 characters long.",
+                        },
+                        email: "Valid email address required."*/
+                    },
+                    highlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-success has-success').addClass('text text-danger has-error');
+                    },
+                    unhighlight: function(element) {
+                        $(element).closest('.form-group').removeClass('text text-danger has-error').addClass('text text-success has-success');
+                    },
+                }
+        );
+
+    });
+</script>
+
+<!--<script>
+    $(function() {
+        $( "#datepicker" ).datepicker({
+            dateFormat:'yyyy-MM-dd',
+            changeYear: true,
+            changeMonth: true,
+            yearRange: "1900 : currentYear"
+        });
+    });
+</script>-->
+
+<script>
+    $(document).ready(function () {
+        $(".hideOnClick").click(function () {
+            $("#hideThis").hide();
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + '/country/all-country' + '"]').parent().addClass('active');
+    });
+</script>
+</body>
+</html>

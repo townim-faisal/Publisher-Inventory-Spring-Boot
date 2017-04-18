@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:pages="http://www.w3.org/1999/xhtml"
+      xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${page_title}">Show All Areas</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <th:block th:include="layout/headerinc :: head"></th:block>
+    <th:block th:include="layout/headerinc :: navbar-common"></th:block>
+
+</head>
+<body>
+<h1 style="width:800px; margin:0 auto; margin-bottom:30px" th:text="${page_title}">All Areas</h1>
+
+
+<div style="width:800px; margin:0 auto;">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <form class="input-group" action="#" role="form" th:action="@{/area/all-area}" th:object="${areaNames}" method="get">
+                            <input type="text" class="form-control input-sm" id="key" name="key" placeholder="Area name..." th:value="${searchKey}"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-info btn-lg" type="submit">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+
+                <div class="modal-body" id="showAreaDetail">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <a href="#" id="updatelink" class="btn btn-warning">Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px">
+        <a class="btn btn-success" href="#" th:href="@{/area/new-area}" style="text-decoration: none; color: white">Add new Area</a>
+    </div>
+
+    <div th:if="${status}=='successful'" th:text="${message}" class="alert alert-success" id="hideThis" >Area Saved </div>
+    <div th:if="${status}=='unsuccessful'" th:text="${message}" class="alert alert-danger" id="hideThis">Area not Saved </div>
+
+     <table class="table table-striped">
+         <thead>
+             <tr>
+                 <th>Sl</th>
+                 <!--<th>ID</th>-->
+                 <th>Area</th>
+                 <th>Details</th>
+                 <th>Update</th>
+                 <th>Delete</th>
+             </tr>
+         </thead>
+         <tbody>
+             <tr th:each="area, iterator : ${areaList}">
+                 <td th:text="${iterator.index +offset+1}">Sl</td>
+                 <!--<td th:text="${area.id}">Sl</td>-->
+                 <td th:text="${area.name}">title</td>
+
+
+                 <td> <a class="btn btn-info singlearea" data-toggle="modal" data-target="#myModal" data-th-attr="areaid=${area.id}">Details</a></td>
+                 <td><a class="btn btn-warning" href="#" th:href="@{/area/edit/} + ${area.id}" style="text-decoration: none; color: white">Update</a></td>
+                 <td><a class="btn btn-danger" href="#" th:href="@{/area/delete/} + ${area.id}" style="text-decoration: none; color: white">Delete</a></td>
+
+             </tr>
+         </tbody>
+     </table>
+
+
+    <nav th:if="${totalElements}!=0" aria-label="...">
+        <ul class="pagination pagination-sm">
+            <li>
+                <a  href="#" th:href="@{/area/all-area(key=${searchKey},page=${previousPage},size=${elementPerPage})}" tabindex="-1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li th:each="i, interator : ${#numbers.sequence( 1, numberOfPage)}" th:class="${currentPage}==${interator.index} ? active">
+                <a class="page-link" href="#" th:text="${interator.index + 1}" th:href="@{/area/all-area(key=${searchKey},page=${interator.index},size=${elementPerPage})}">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#" th:href="@{/area/all-area(key=${searchKey},page=${nextPage},size=${elementPerPage})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+</div>
+
+<!--Modal Script-->
+<script>
+    $(document).ready(function () {
+        $('a.singlearea').click(function () {
+            $.ajax({
+                url: "/area/area-detail/"+$(this).attr('areaid'),
+                success: function (data) {
+                    /*var birthDate;
+                    var bDate;
+                    var bMonth;
+                    var bYear;
+                    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                    ];
+                    if(data.dateOfBirth!=null){
+                        bDate = new Date(data.dateOfBirth).getDate();
+                        bMonth = monthNames[(new Date(data.dateOfBirth).getMonth())];
+                        bYear = new Date(data.dateOfBirth).getFullYear();
+
+                        birthDate = bDate+'-'+bMonth+'-'+bYear;
+                    }
+                    else {
+                        birthDate = 'Not Available';
+                    }*/
+
+                    $('#showAreaDetail').html(
+                            '<dl class="dl-horizontal">' +
+                                '<dt>Name:</dt>' +
+                                    '<dd>'+data.name+'</dd>' +
+                                /*'<dt>Date Of Birth:</dt>' +
+                                    '<dd>'+birthDate+'</dd>' +*/
+                                '<dt>Phone:</dt>' +
+                                    '<dd>'+data.phone+'</dd>' +
+                                '<dt>Email:</dt>' +
+                                    '<dd>'+data.email+'</dd>' +
+                                 '<dt>Address:</dt>' +
+                                    '<dd class="modal-wrap">'+data.address+'</dd>' +
+                            '</dl>');
+
+                    $('#myModalLabel').html(data.name);
+                    $('#updatelink').attr('href', '/area/edit/'+data.id);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $( "#key" ).autocomplete({
+            source: "/area/search/"
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+    });
+</script>
+
+</body>
+</html>
